@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.1/jquery.min.js"></script>
+<script>
+	/*
+		입구 -> 1층 : 1승
+		1층 -> 2층 : 2승
+		2층 -> 3층 : 3승
+		3층 -> 4층 : 4승
+		4층 -> 5층 : 5승
+		5층 -> 6층 : 6승
+		6층 -> 7층 : 7승
+		한층 오르면 승기록 초기화
+	*/
+	$(document).ready(function() {
+		// 게임 카운트
+		let count = 0;
+		// 캐릭터 위치(층)
+		let currentStair = 0;
+		// 승리 횟수 기록
+		let winSum = 0;
+		$('#count').val(count);
+		
+		$('#playBtn').click(function() {
+			if($('.rsp:checked').length == 0) {
+				alert('가위/바위/보를 선택하세요');
+				return;
+			}
+			
+			// 가위/바위/보 알고리즘 로직
+			// 1) 사용자 선택
+			let rspCls = $('.rsp:checked'); // 배열
+			let myRSP = $(rspCls[0]).val(); // rspCls[0].value
+			
+			// 2) 컴퓨터 선택
+			let arr = ['가위','바위','보'];
+			let rnum = Math.floor(Math.random()*3); // 0,1,2
+			let comRSP = arr[rnum];
+			
+			console.log('my:', myRSP, 'com:', comRSP);
+			
+			// 3) 승패
+			let result = 0; // myRSP승 1, 비김 0, 패 -1
+			
+			if(myRSP == comRSP) { // 비김
+				result = 0;
+			} else if((myRSP=='가위'&&comRSP=='보') || (myRSP=='바위'&&comRSP=='가위') || (myRSP=='보'&&comRSP=='바위')) { // 승
+				result = 1;
+				winSum = winSum + 1; // 누적 승리횟수
+				
+				if(winSum > currentStair) {
+					let temp = currentStair;
+					currentStair = currentStair + 1;
+					
+					// 뷰 알고리즘
+					// play전 캐릭터(span태그 텍스트) 삭제
+					$('#s'+temp).html('&nbsp;');
+					// play후 위치에 캐릭터 위치
+					$('#s'+currentStair).html('&#128037;');
+					
+					winSum = 0; // 승리기록 초기화
+				}
+				
+			} else { // 패
+				result = -1;
+			}
+			console.log('result :', result);
+			console.log('winSum :', winSum);
+			// 플래이버튼 클릭 로그기록
+			let logStr = '-> 비김 ';
+			if(result == 1) {
+				logStr = '-> 승('+currentStair+'층) ';
+			} else if(result == -1) {
+				logStr = '-> 패 ';
+			}
+			
+			$('#playLog').val($('#playLog').val()+logStr);
+			
+			// 카운트
+			count = count+=1;
+			console.log('count : ', count);
+			$('#count').val(count);
+			
+			// 게임완료(7층도착)
+			if(currentStair == 7) {
+				alert('게임종료(count: '+count+')');
+				// 버튼을 비활성화
+				$('#playBtn').attr('disabled','disabled');
+				// $('#playBtn').prop('disabled', true);
+			}
+			
+		});
+	});
+</script>
+</head>
+<body>
+   <h1>계단 게임</h1>
+   <form>
+      <fieldset>
+         <legend>가위/바위/보</legend>
+         <input type="text" id="count" readonly="readonly">번째 : 
+         <input type="radio" name="rsp" class="rsp" value="가위">가위
+         <input type="radio" name="rsp" class="rsp" value="바위">바위
+         <input type="radio" name="rsp" class="rsp" value="보">보
+         <button type="button" id="playBtn">play</button>
+         <div>log</div>
+         <div>
+         	<textarea rows="10" cols="100" id="playLog"></textarea>
+         </div>
+      </fieldset>
+   </form>
+   <br>
+   <table border="1">
+      <tr>
+         <td style="width:50px; background-color: purple;"><span id="s7">&nbsp;</span></td>
+         <td rowspan="7" style="text-align: center; vertical-align: bottom;">&nbsp;
+         	<span style="font-size:20px;" id="s0">&#128037;</span>
+         </td>
+      </tr>
+      <tr>
+         <td style="background-color: navy;"><span id="s6">&nbsp;</span></td>
+      </tr>
+      <tr>
+         <td style="background-color: blue;"><span id="s5">&nbsp;</span></td>
+      </tr>
+      <tr>
+         <td style="background-color: green;"><span id="s4">&nbsp;</span></td>
+      </tr>
+      <tr>
+         <td style="background-color: yellow;"><span id="s3">&nbsp;</span></td>
+      </tr>
+      <tr>
+         <td style="background-color: orange;"><span id="s2">&nbsp;</span></td>
+      </tr>
+      <tr>
+         <td style="background-color: red;"><span id="s1">&nbsp;</span></td>
+      </tr>
+   </table>
+</body>
+</html>
