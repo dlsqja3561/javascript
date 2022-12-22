@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+</head>
+<body>
+	<!-- 
+		sn1 입력 후 blur이벤트 발생시 -> sn2.focus()
+		sn2 입력 후 blur이벤트 발생시 
+		1) 글자수 체크
+		2) 나이 출력
+			날짜 API 사용
+			let today = new Date();
+		3) 성별 출력
+	 -->
+	 <form>
+	 	<table border="1">
+	 		<tr>
+	 			<td>주민번호</td>
+	 			<td>
+	 				<input type="text" id="sn1">
+	 				-
+	 				<input type="text" id="sn2">
+	 				<br><span id="snMsg" style="color:red;"></span>
+	 			</td>
+	 		</tr>
+	 		<tr>
+	 			<td>나이</td>
+	 			<td><input type="number" id="age" readonly="readonly"></td>
+	 		</tr>
+	 		<tr>
+	 			<td>성별</td>
+	 			<td>
+	 				<input type="radio" name="gender" class="gender" id="male" onclick="return(false);">남
+	 				<input type="radio" name="gender" class="gender" id="female" onclick="return(false);">여
+	 			</td>
+	 		</tr>
+	 	</table>
+	 </form>
+	 <script>
+	 	// sn1 체크
+	 	const MAX_COUNT_SN1 = 6; // sn1 최대글자수
+	 	const MAX_COUNT_SN2 = 7; // sn2 최대글자수
+	 	let sn1 = document.querySelector('#sn1');
+	 	sn1.addEventListener('blur', function() {
+	 		let len = sn1.value.length;
+	 		console.log(len);
+	 		if(len > 6) {
+	 			document.querySelector('#snMsg').innerHTML = MAX_COUNT_SN1+'자 까지 입력가능';
+	 			sn1.value = sn1.value.substring(0, MAX_COUNT_SN1);
+	 			sn1.focus();
+	 		} else if(len < 6) {
+	 			document.querySelector('#snMsg').innerHTML = '다시 입력해 주세요';
+	 			sn1.focus();
+	 		} else {
+	 			document.querySelector('#snMsg').innerHTML = '';
+	 			sn2.focus(); 
+	 		}
+	 	})
+	 	// sn2 체크
+	 	let sn2 = document.querySelector('#sn2');
+	 	sn2.addEventListener('blur', function() {
+	 		let len = sn2.value.length;
+	 		console.log(len);
+	 		if(len > 7) {
+	 			document.querySelector('#snMsg').innerHTML = MAX_COUNT_SN2+'자 까지 입력가능';
+	 			sn2.value = sn2.value.substring(0, MAX_COUNT_SN2);
+	 			sn2.focus();
+	 			return;
+	 		} else if(len < 7) {
+	 			document.querySelector('#snMsg').innerHTML = '다시 입력해 주세요';
+	 			sn2.focus();
+	 			return;
+	 		} else {
+	 			document.querySelector('#snMsg').innerHTML = '';
+	 		}
+	 		// 오늘 날짜
+	 		let today = new Date(); 
+	 		let toYear = today.getFullYear(); // 오늘 년도
+	 		console.log(toYear);
+	 		let snYear = 0; // 주민번호 입력 년도
+	 		// 1,2 = 1900년대  3,4 = 2000년대
+	 		if(sn2.value.substring(0, 1) == 1 || sn2.value.substring(0, 1) == 2) {
+	 			snYear = 19+sn1.value.substring(0,2);
+	 		} else {
+	 			snYear = 20+sn1.value.substring(0,2);
+	 		}
+	 		console.log(snYear);
+	 		
+	 		// 나이
+	 		let age = (toYear - snYear)+1;
+	 		console.log(age);
+	 		document.querySelector('#age').value = age;
+	 		
+	 		// 성별
+	 		if(sn2.value.substring(0, 1) == 1 || sn2.value.substring(0, 1) == 3) {
+	 			document.querySelector('#male').checked = true;
+	 		} else {
+	 			document.querySelector('#female').checked = true;
+	 		}
+	 	})
+	 </script>
+</body>
+</html>
